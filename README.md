@@ -38,9 +38,15 @@ php artisan migrate
 
 ## API Endpoints
 
-All endpoints require authentication using Laravel Sanctum.
+### Authentication
 
-### Tasks
+- `POST /api/register` - Register a new user
+  - Required fields: `name`, `email`, `password`, `password_confirmation`
+- `POST /api/login` - Login user
+  - Required fields: `email`, `password`
+- `POST /api/logout` - Logout user (requires authentication)
+
+### Tasks (requires authentication)
 
 - `GET /api/tasks` - List all tasks
 - `POST /api/tasks` - Create a new task
@@ -51,4 +57,32 @@ All endpoints require authentication using Laravel Sanctum.
 
 ## Authentication
 
-The API uses Laravel Sanctum for authentication. You need to create a user and generate a token to access the protected endpoints.
+The API uses Laravel Sanctum for authentication. After registration or login, you will receive a token. Include this token in subsequent requests:
+
+```http
+Authorization: Bearer your_token_here
+```
+
+## Example Usage
+
+### Register a new user
+```bash
+curl -X POST http://localhost:8000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","email":"john@example.com","password":"password123","password_confirmation":"password123"}'
+```
+
+### Login
+```bash
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"john@example.com","password":"password123"}'
+```
+
+### Create a task (with authentication)
+```bash
+curl -X POST http://localhost:8000/api/tasks \
+  -H "Authorization: Bearer your_token_here" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Complete project","status":"pending"}'
+```
